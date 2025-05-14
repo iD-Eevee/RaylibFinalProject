@@ -13,6 +13,15 @@ int main()
     int screenHeight = 450;
     InitWindow(screenWidth, screenHeight, "Top-Down Game");
 
+    // Initialize Background
+    Texture2D bgImage = LoadTexture("images/level1.png");
+
+    // Initialize Player
+    Texture2D playerImage = LoadTexture("images/player.png");
+    float playerX = 500;
+    float playerY = 100;
+    Vector2 player = {playerX, playerY};
+
     SetTargetFPS(60);
     // ================================================================================================================
     // Game Loop
@@ -21,7 +30,11 @@ int main()
         //-------------------------------------------------
         BeginDrawing();
 
-        ClearBackground(DARKGREEN);
+        // Draw Background
+        DrawTexture(bgImage, 0, 0, WHITE);
+
+        // Draw the Player
+        DrawTexture(playerImage, player.x, player.y, WHITE);
 
         EndDrawing();
         //-------------------------------------------------
