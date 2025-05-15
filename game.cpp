@@ -65,6 +65,8 @@ int main()
             playerDir = down;
         }
 
+        //----------------------
+        // Boundaries for the Player Movement
         if ((player.x + 64) >= screenWidth) // Right
         {
             player.x = (screenWidth - 64);
