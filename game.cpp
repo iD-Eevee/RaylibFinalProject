@@ -23,6 +23,20 @@ int main()
     Vector2 player = {playerX, playerY};
     float speed = 4.0f;
 
+    // Player Direction
+    Texture2D playerRight = LoadTexture("images/player_right.png");
+    Texture2D playerLeft = LoadTexture("images/player_left.png");
+    Texture2D playerUp = LoadTexture("images/player_up.png");
+    Texture2D playerDown = LoadTexture("images/player_down.png");
+    typedef enum
+    {
+        up,
+        down,
+        left,
+        right
+    } Direction;
+    Direction playerDir = down;
+
     SetTargetFPS(60);
     // ================================================================================================================
     // Game Loop
@@ -33,18 +47,39 @@ int main()
         if (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D))
         {
             player.x += speed;
+            playerDir = right;
         }
         if (IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_A))
         {
             player.x -= speed;
+            playerDir = left;
         }
         if (IsKeyDown(KEY_UP) || IsKeyDown(KEY_W))
         {
             player.y -= speed;
+            playerDir = up;
         }
         if (IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_S))
         {
             player.y += speed;
+            playerDir = down;
+        }
+
+        if ((player.x + 64) >= screenWidth) // Right
+        {
+            player.x = (screenWidth - 64);
+        }
+        if (player.x <= 0) // Left
+        {
+            player.x = 0;
+        }
+        if (player.y <= 0) // Up
+        {
+            player.y = 0;
+        }
+        if ((player.y + 64) >= screenHeight) // Down
+        {
+            player.y = (screenHeight - 64);
         }
 
         //-------------------------------------------------
@@ -54,7 +89,23 @@ int main()
         DrawTexture(bgImage, 0, 0, WHITE);
 
         // Draw the Player
-        DrawTexture(playerImage, player.x, player.y, WHITE);
+        switch (playerDir)
+        {
+            case right:
+                DrawTexture(playerRight, player.x, player.y, WHITE);
+            break;
+            case left:
+                DrawTexture(playerLeft, player.x, player.y, WHITE);
+            break;
+            case up:
+                DrawTexture(playerUp, player.x, player.y, WHITE);
+            break;
+            case down:
+                DrawTexture(playerDown, player.x, player.y, WHITE);
+            break;
+            default:
+            break;
+        }
 
         EndDrawing();
         //-------------------------------------------------
