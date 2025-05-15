@@ -21,12 +21,32 @@ int main()
     float playerX = 500;
     float playerY = 100;
     Vector2 player = {playerX, playerY};
+    float speed = 4.0f;
 
     SetTargetFPS(60);
     // ================================================================================================================
     // Game Loop
     while (!WindowShouldClose())
     {
+        //-------------------------------------------------
+        // Player Controls
+        if (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D))
+        {
+            player.x += speed;
+        }
+        if (IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_A))
+        {
+            player.x -= speed;
+        }
+        if (IsKeyDown(KEY_UP) || IsKeyDown(KEY_W))
+        {
+            player.y -= speed;
+        }
+        if (IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_S))
+        {
+            player.y += speed;
+        }
+
         //-------------------------------------------------
         BeginDrawing();
 
