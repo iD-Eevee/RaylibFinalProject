@@ -14,6 +14,9 @@ int main()
     int screenHeight = 450;
     InitWindow(screenWidth, screenHeight, "Top-Down Game");
 
+    // Variables
+    int score = 0;
+
     // Initialize Background
     Texture2D bgImage = LoadTexture("images/level1.png");
 
@@ -88,9 +91,9 @@ int main()
         {
             player.x = 0;
         }
-        if (player.y <= 0) // Up
+        if (player.y <= 50) // Up
         {
-            player.y = 0;
+            player.y = 50;
         }
         if ((player.y + 64) >= screenHeight) // Down
         {
@@ -123,6 +126,7 @@ int main()
                 coinCollision = CheckCollisionRecs(playerCollider, items[i].collider);
                 if (coinCollision == true)
                 {
+                    score += 10;
                     items[i].collect = true;
                 }
                 else
@@ -137,6 +141,11 @@ int main()
         {
             DrawTexture(coinImage, coin.x, coin.y, WHITE);
         }*/
+
+        //----------------------
+        // Draw Score
+        DrawRectangle(0, 0, screenWidth, 50, BLACK);
+        DrawText(TextFormat("Score: %i", score), 10, 10, 30, WHITE);
 
         // Draw the Player
         switch (playerDir)
