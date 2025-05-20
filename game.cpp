@@ -4,6 +4,7 @@
 // Created by Eevee
 
 #include "raylib.h"
+#include "classes.h"
 
 // ===================================================================================================================
 int main()
@@ -39,11 +40,12 @@ int main()
     Direction playerDir = down;
 
     // Item Initialization
-    Texture2D coinImage = LoadTexture("images/coin.png");
+    /*Texture2D coinImage = LoadTexture("images/coin.png");
     Vector2 coin = {100, 200};
     Rectangle coinCollider = {coin.x, coin.y, 50, 50};
-    bool collect = false;
+    bool collect = false;*/
     bool coinCollision = false;
+    Item items[3] = {Item(100, 100), Item(100, 200), Item(100, 300)};
 
     SetTargetFPS(60);
     // ================================================================================================================
@@ -96,15 +98,15 @@ int main()
         }
 
         //----------------------
-        // Coin Collision
-        if (collect == false)
+        // Coin Collision (Old)
+        /*if (collect == false)
         {
             coinCollision = CheckCollisionRecs(playerCollider, coinCollider);
             if (coinCollision == true)
             {
                 collect = true;
             }
-        }
+        }*/
 
         //-------------------------------------------------
         BeginDrawing();
@@ -112,11 +114,29 @@ int main()
         // Draw Background
         DrawTexture(bgImage, 0, 0, WHITE);
 
-        // Draw the Coin
-        if (collect == false)
+        //----------------------
+        // Coin Collision
+        for (int i = 0; i < 3; ++i)
+        {
+            if (items[i].collect == false)
+            {
+                coinCollision = CheckCollisionRecs(playerCollider, items[i].collider);
+                if (coinCollision == true)
+                {
+                    items[i].collect = true;
+                }
+                else
+                {
+                    DrawTexture(items[i].image, items[i].position.x, items[i].position.y, WHITE);
+                }
+            }
+        }
+
+        // Draw the Coin (Old)
+        /*if (collect == false)
         {
             DrawTexture(coinImage, coin.x, coin.y, WHITE);
-        }
+        }*/
 
         // Draw the Player
         switch (playerDir)
