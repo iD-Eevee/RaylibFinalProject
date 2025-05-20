@@ -17,11 +17,12 @@ int main()
     Texture2D bgImage = LoadTexture("images/level1.png");
 
     // Initialize Player
-    Texture2D playerImage = LoadTexture("images/player.png");
+    //Texture2D playerImage = LoadTexture("images/player.png");
     float playerX = 500;
     float playerY = 100;
     Vector2 player = {playerX, playerY};
     float speed = 4.0f;
+    Rectangle playerCollider = {player.x, player.y, 40, 40};
 
     // Player Direction
     Texture2D playerRight = LoadTexture("images/player_right.png");
@@ -36,6 +37,13 @@ int main()
         right
     } Direction;
     Direction playerDir = down;
+
+    // Item Initialization
+    Texture2D coinImage = LoadTexture("images/coin.png");
+    Vector2 coin = {100, 200};
+    Rectangle coinCollider = {coin.x, coin.y, 50, 50};
+    bool collect = false;
+    bool coinCollision = false;
 
     SetTargetFPS(60);
     // ================================================================================================================
@@ -64,6 +72,9 @@ int main()
             player.y += speed;
             playerDir = down;
         }
+        // Set the Collider's Position
+        playerCollider.x = player.x;
+        playerCollider.y = player.y;
 
         //----------------------
         // Boundaries for the Player Movement
@@ -84,11 +95,28 @@ int main()
             player.y = (screenHeight - 64);
         }
 
+        //----------------------
+        // Coin Collision
+        if (collect == false)
+        {
+            coinCollision = CheckCollisionRecs(playerCollider, coinCollider);
+            if (coinCollision == true)
+            {
+                collect = true;
+            }
+        }
+
         //-------------------------------------------------
         BeginDrawing();
 
         // Draw Background
         DrawTexture(bgImage, 0, 0, WHITE);
+
+        // Draw the Coin
+        if (collect == false)
+        {
+            DrawTexture(coinImage, coin.x, coin.y, WHITE);
+        }
 
         // Draw the Player
         switch (playerDir)
