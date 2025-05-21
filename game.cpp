@@ -55,11 +55,13 @@ int main()
         Enemy(400, 200),
         Enemy(150, 100, Moving, X, 100, 300),
         Enemy(250, 200, Moving, Y, 200, 300)};
+    bool enemyCollision = false;
+    bool gameEnd = false;
 
     SetTargetFPS(60);
     // ================================================================================================================
     // Game Loop
-    while (!WindowShouldClose())
+    while (!WindowShouldClose() && !gameEnd)
     {
         //-------------------------------------------------
         // Player Controls
@@ -148,6 +150,7 @@ int main()
         {
             if (enemies[i].destroyed == false)
             {
+                enemyCollision = CheckCollisionRecs(enemies[i].collider, playerCollider);
                 // Draw Enemies
                 DrawTexture(enemies[i].image, enemies[i].position.x, enemies[i].position.y, WHITE);
 
@@ -172,6 +175,12 @@ int main()
                 
                 enemies[i].collider.x = enemies[i].position.x;
                 enemies[i].collider.y = enemies[i].position.y;
+
+                // Collision with Player
+                if (enemyCollision == true)
+                {
+                    gameEnd = true;
+                }
             }
         }
 
