@@ -50,6 +50,12 @@ int main()
     bool coinCollision = false;
     Item items[3] = {Item(100, 100), Item(100, 200), Item(100, 300)};
 
+    // Enemy Initialization
+    Enemy enemies[4] = {Enemy(500, 200, Idle),
+        Enemy(400, 200),
+        Enemy(150, 100, Moving),
+        Enemy(250, 200, Moving)};
+
     SetTargetFPS(60);
     // ================================================================================================================
     // Game Loop
@@ -133,6 +139,16 @@ int main()
                 {
                     DrawTexture(items[i].image, items[i].position.x, items[i].position.y, WHITE);
                 }
+            }
+        }
+        
+        //----------------------
+        // Draw Enemies
+        for (int i = 0; i < 4; ++i)
+        {
+            if (enemies[i].destroyed == false)
+            {
+                DrawTexture(enemies[i].image, enemies[i].position.x, enemies[i].position.y, WHITE);
             }
         }
 
