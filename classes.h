@@ -6,6 +6,12 @@ enum Type
     Idle
 };
 
+enum Movement
+{
+    X,
+    Y
+};
+
 class Item
 {
     public:
@@ -31,17 +37,26 @@ class Enemy
     bool destroyed = false;
     float size = 54;
     const char *enemyImage;
+    float speed, start, end, velocity;
+    Movement direction;
 
-    Enemy(float x, float y, Type state = Idle)
+    Enemy(float x, float y, Type state = Idle, Movement dir = X, float startPos = 100, float endPos = 300, float enemySpeed = 3)
     {
         switch(state)
         {
             case Moving:
             enemyImage = "images/ghost.png";
+            speed = enemySpeed;
+            start = startPos;
+            end = endPos;
+            direction = dir;
             break;
 
             case Idle:
             enemyImage = "images/enemy.png";
+            speed = 0;
+            start = x;
+            end = x;
             break;
 
             default:

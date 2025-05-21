@@ -53,8 +53,8 @@ int main()
     // Enemy Initialization
     Enemy enemies[4] = {Enemy(500, 200, Idle),
         Enemy(400, 200),
-        Enemy(150, 100, Moving),
-        Enemy(250, 200, Moving)};
+        Enemy(150, 100, Moving, X, 100, 300),
+        Enemy(250, 200, Moving, Y, 200, 300)};
 
     SetTargetFPS(60);
     // ================================================================================================================
@@ -143,12 +143,35 @@ int main()
         }
         
         //----------------------
-        // Draw Enemies
+        // Enemies
         for (int i = 0; i < 4; ++i)
         {
             if (enemies[i].destroyed == false)
             {
+                // Draw Enemies
                 DrawTexture(enemies[i].image, enemies[i].position.x, enemies[i].position.y, WHITE);
+
+                // Move Enemies
+                enemies[i].velocity = enemies[i].speed;
+                if (enemies[i].direction == X) 
+                {
+                    enemies[i].position.x += enemies[i].velocity;
+                    if (enemies[i].position.x <= enemies[i].start || enemies[i].position.x >= enemies[i].end)
+                    {
+                        enemies[i].speed = -enemies[i].velocity;
+                    }
+                }
+                else
+                {
+                    enemies[i].position.y += enemies[i].velocity;
+                    if (enemies[i].position.y <= enemies[i].start || enemies[i].position.y >= enemies[i].end)
+                    {
+                        enemies[i].speed = -enemies[i].velocity;
+                    }
+                }
+                
+                enemies[i].collider.x = enemies[i].position.x;
+                enemies[i].collider.y = enemies[i].position.y;
             }
         }
 
