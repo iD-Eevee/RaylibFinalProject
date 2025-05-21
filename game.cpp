@@ -42,6 +42,13 @@ int main()
     } Direction;
     Direction playerDir = down;
 
+    // Player Combat
+    Texture2D attackImage = LoadTexture("images/fire.png");
+    Vector2 attack = {player.x, player.y};
+    Rectangle attackCollider = {attack.x, attack.y, 32, 32};
+    bool attackCollision = false;
+    bool attacking = false;
+
     // Item Initialization
     /*Texture2D coinImage = LoadTexture("images/coin.png");
     Vector2 coin = {100, 200};
@@ -119,6 +126,47 @@ int main()
             }
         }*/
 
+        //----------------------
+        // Player Attack
+        if (IsKeyPressed(KEY_Z))
+        {
+            if (attacking == false)
+            {
+                attacking = true;
+                switch (playerDir)
+                {
+                    case up:
+                        attack.x = player.x + 10;
+                        attack.y = player.y - 30;
+                    break;
+
+                    case down:
+                        attack.x = player.x + 10;
+                        attack.y = player.y + 60;
+                    break;
+
+                    case left:
+                        attack.x = player.x - 30;
+                        attack.y = player.y + 10;
+                    break;
+
+                    case right:
+                        attack.x = player.x + 60;
+                        attack.y = player.y + 10;
+                    break;
+
+                    default:
+                    break;
+                }
+                attackCollider.x = attack.x;
+                attackCollider.y = attack.y;
+            }
+        }
+        else
+        {
+            attacking = false;
+        }
+        
         //-------------------------------------------------
         BeginDrawing();
 
@@ -151,30 +199,39 @@ int main()
             if (enemies[i].destroyed == false)
             {
                 enemyCollision = CheckCollisionRecs(enemies[i].collider, playerCollider);
-                // Draw Enemies
-                DrawTexture(enemies[i].image, enemies[i].position.x, enemies[i].position.y, WHITE);
-
-                // Move Enemies
-                enemies[i].velocity = enemies[i].speed;
-                if (enemies[i].direction == X) 
+                attackCollision = CheckCollisionRecs(enemies[i].collider, attackCollider);
+                // Collision with Attack
+                if (attackCollision == true)
                 {
-                    enemies[i].position.x += enemies[i].velocity;
-                    if (enemies[i].position.x <= enemies[i].start || enemies[i].position.x >= enemies[i].end)
-                    {
-                        enemies[i].speed = -enemies[i].velocity;
-                    }
+                    enemies[i].destroyed = true;
                 }
                 else
                 {
-                    enemies[i].position.y += enemies[i].velocity;
-                    if (enemies[i].position.y <= enemies[i].start || enemies[i].position.y >= enemies[i].end)
+                    // Draw Enemies
+                    DrawTexture(enemies[i].image, enemies[i].position.x, enemies[i].position.y, WHITE);
+
+                    // Move Enemies
+                    enemies[i].velocity = enemies[i].speed;
+                    if (enemies[i].direction == X) 
                     {
-                        enemies[i].speed = -enemies[i].velocity;
+                        enemies[i].position.x += enemies[i].velocity;
+                        if (enemies[i].position.x <= enemies[i].start || enemies[i].position.x >= enemies[i].end)
+                        {
+                            enemies[i].speed = -enemies[i].velocity;
+                        }
                     }
+                    else
+                    {
+                        enemies[i].position.y += enemies[i].velocity;
+                        if (enemies[i].position.y <= enemies[i].start || enemies[i].position.y >= enemies[i].end)
+                        {
+                            enemies[i].speed = -enemies[i].velocity;
+                        }
+                    }
+                    
+                    enemies[i].collider.x = enemies[i].position.x;
+                    enemies[i].collider.y = enemies[i].position.y;
                 }
-                
-                enemies[i].collider.x = enemies[i].position.x;
-                enemies[i].collider.y = enemies[i].position.y;
 
                 // Collision with Player
                 if (enemyCollision == true)
@@ -182,6 +239,13 @@ int main()
                     gameEnd = true;
                 }
             }
+        }
+
+        //----------------------
+        // Draw the Attack
+        if (attacking == true)
+        {
+            DrawTexture(attackImage, attack.x, attack.y, WHITE);
         }
 
         // Draw the Coin (Old)
