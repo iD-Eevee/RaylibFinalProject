@@ -49,11 +49,18 @@ int main()
     bool attackCollision = false;
     bool attacking = false;
 
-    // Item Initialization
-    /*Texture2D coinImage = LoadTexture("images/coin.png");
-    Vector2 coin = {100, 200};
-    Rectangle coinCollider = {coin.x, coin.y, 50, 50};
-    bool collect = false;*/
+    // Key Item Initialization
+    Texture2D keyImage = LoadTexture("images/key.png");
+    Vector2 key = {350, 200};
+    Rectangle keyCollider = {key.x, key.y, 50, 50};
+    bool keyCollision = false;
+    bool unlocked = false;
+
+    // Goal Initialization
+    Texture2D goalImage = LoadTexture("images/goal.png");
+    Vector2 goal = {650, 300};
+
+    // Collectible Item Initialization
     bool coinCollision = false;
     Item items[3] = {Item(100, 100), Item(100, 200), Item(100, 300)};
 
@@ -116,15 +123,15 @@ int main()
         }
 
         //----------------------
-        // Coin Collision (Old)
-        /*if (collect == false)
+        // Key Collision
+        if (unlocked == false)
         {
-            coinCollision = CheckCollisionRecs(playerCollider, coinCollider);
-            if (coinCollision == true)
+            keyCollision = CheckCollisionRecs(playerCollider, keyCollider);
+            if (keyCollision == true)
             {
-                collect = true;
+                unlocked = true;
             }
-        }*/
+        }
 
         //----------------------
         // Player Attack
@@ -248,11 +255,16 @@ int main()
             DrawTexture(attackImage, attack.x, attack.y, WHITE);
         }
 
-        // Draw the Coin (Old)
-        /*if (collect == false)
+        //----------------------
+        // Draw the Key
+        if (unlocked == false)
         {
-            DrawTexture(coinImage, coin.x, coin.y, WHITE);
-        }*/
+            DrawTexture(keyImage, key.x, key.y, WHITE);
+        }
+        else
+        {
+            DrawTexture(goalImage, goal.x, goal.y, WHITE);
+        }
 
         //----------------------
         // Draw Score
