@@ -48,8 +48,14 @@ int main()
     Rectangle attackCollider = {attack.x, attack.y, 32, 32};
     bool attackCollision = false;
     bool attacking = false;
-    int playerHealth = 4;
+
+    // Health
+    float playerHealth = 100;
     Color playerColor = WHITE;
+    float playerHealthMax = 100;
+    float healthWidth;
+    float healthX;
+    Color healthColor = GREEN;
 
     // Key Item Initialization
     Texture2D keyImage = LoadTexture("images/key.png");
@@ -291,7 +297,7 @@ int main()
                     cooldown = true;
                     if (currentTime >= cooldownTime)
                     {
-                        playerHealth -= 1;
+                        playerHealth -= 20;
                         startTime = GetTime();
                     }
             
@@ -341,8 +347,32 @@ int main()
         // Draw Score
         DrawRectangle(0, 0, screenWidth, 50, BLACK);
         DrawText(TextFormat("Score: %i", score), 10, 10, 30, WHITE);
-        DrawText(TextFormat("Health: %i", playerHealth), 350, 10, 30, WHITE);
 
+        //----------------------
+        // Draw Healthbar
+        healthWidth = (100 * playerHealth) / playerHealthMax;
+        healthX = player.x + (playerRight.width / 2) - (healthWidth / 2);
+
+        // Healthbar Color
+        if (playerHealth <= 25)
+        {
+            healthColor = RED;
+        }
+        else if (playerHealth <= 50)
+        {
+            healthColor = ORANGE;
+        }
+        else if (playerHealth <= 75)
+        {
+            healthColor = YELLOW;
+        }
+        else
+        {
+            healthColor = GREEN;
+        }
+        DrawRectangle(healthX, player.y - 5, healthWidth, 10, healthColor);
+
+        //----------------------
         // Draw the Player
         switch (playerDir)
         {
