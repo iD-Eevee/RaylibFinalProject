@@ -48,6 +48,8 @@ int main()
     Rectangle attackCollider = {attack.x, attack.y, 32, 32};
     bool attackCollision = false;
     bool attacking = false;
+    int playerHealth = 4;
+    Color playerColor = WHITE;
 
     // Key Item Initialization
     Texture2D keyImage = LoadTexture("images/key.png");
@@ -75,6 +77,12 @@ int main()
     // Initialize Walls
     bool wallCollision = false;
     Wall walls[2] = {Wall(10,200), Wall(10,300)};
+
+    // Cooldown & Timers
+    double startTime = GetTime();
+    double currentTime = 0.0;
+    double cooldownTime = 1;
+    bool cooldown = false;
 
     SetTargetFPS(60);
     // ================================================================================================================
@@ -279,9 +287,36 @@ int main()
                 // Collision with Player
                 if (enemyCollision == true)
                 {
-                    gameEnd = true;
+                    // Cooldown Timer
+                    cooldown = true;
+                    if (currentTime >= cooldownTime)
+                    {
+                        playerHealth -= 1;
+                        startTime = GetTime();
+                    }
+            
+                    // Game Over
+                    if (playerHealth <= 0)
+                    {
+                        gameEnd = true;
+                    }
                 }
             }
+        }
+        //----------------------
+        // Cooldown Timer
+        if (cooldown == true)
+        {
+            if (currentTime >= cooldownTime)
+            {
+                cooldown = false;
+            }
+            currentTime = GetTime() - startTime;
+            playerColor = RED;
+        }
+        else
+        {
+            playerColor = WHITE;
         }
 
         //----------------------
@@ -306,21 +341,22 @@ int main()
         // Draw Score
         DrawRectangle(0, 0, screenWidth, 50, BLACK);
         DrawText(TextFormat("Score: %i", score), 10, 10, 30, WHITE);
+        DrawText(TextFormat("Health: %i", playerHealth), 350, 10, 30, WHITE);
 
         // Draw the Player
         switch (playerDir)
         {
             case right:
-                DrawTexture(playerRight, player.x, player.y, WHITE);
+                DrawTexture(playerRight, player.x, player.y, playerColor);
             break;
             case left:
-                DrawTexture(playerLeft, player.x, player.y, WHITE);
+                DrawTexture(playerLeft, player.x, player.y, playerColor);
             break;
             case up:
-                DrawTexture(playerUp, player.x, player.y, WHITE);
+                DrawTexture(playerUp, player.x, player.y, playerColor);
             break;
             case down:
-                DrawTexture(playerDown, player.x, player.y, WHITE);
+                DrawTexture(playerDown, player.x, player.y, playerColor);
             break;
             default:
             break;
