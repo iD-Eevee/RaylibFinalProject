@@ -72,6 +72,10 @@ int main()
     bool enemyCollision = false;
     bool gameEnd = false;
 
+    // Initialize Walls
+    bool wallCollision = false;
+    Wall walls[2] = {Wall(10,200), Wall(10,300)};
+
     SetTargetFPS(60);
     // ================================================================================================================
     // Game Loop
@@ -195,6 +199,38 @@ int main()
                 else
                 {
                     DrawTexture(items[i].image, items[i].position.x, items[i].position.y, WHITE);
+                }
+            }
+        }
+
+        //----------------------
+        // Wall Collision
+        for (int i = 0; i < 2; ++i)
+        {
+            DrawTexture(walls[i].image, walls[i].position.x, walls[i].position.y, WHITE);
+            wallCollision = CheckCollisionRecs(playerCollider, walls[i].collider);
+            if (wallCollision == true)
+            {
+                switch (playerDir)
+                {
+                    case up:
+                        player.y = walls[i].position.y + 64;
+                    break;
+                        
+                    case down:
+                        player.y = walls[i].position.y - 64;
+                    break;
+
+                    case left:
+                        player.x = walls[i].position.x + 64;
+                    break;
+
+                    case right:
+                        player.x = walls[i].position.x - 64;
+                    break;
+
+                    default:
+                    break;
                 }
             }
         }
