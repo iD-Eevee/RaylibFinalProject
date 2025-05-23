@@ -89,11 +89,17 @@ int main()
     Vector2 npc = {330, 290};
     Rectangle npcCollider = {npc.x, npc.y, 100, 100};
     float npcCollision = false;
+
+    // Dialogue
     const char *dialogue;
     float dialogueLength, textBoxWidth, textBoxHeight, textBoxX, textBoxY;
     int textSize = 20;
     float padding = 10;
     int lines;
+    int currentLine = 0;
+    Vector2 speaker;
+    float speakerWidth;
+    bool dialogueActive = false;
 
     // Cooldown & Timers
     double startTime = GetTime();
@@ -108,30 +114,33 @@ int main()
     {
         //-------------------------------------------------
         // Player Controls
-        if (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D))
+        if (dialogueActive == false)
         {
-            player.x += speed;
-            playerDir = right;
+            if (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D))
+            {
+                player.x += speed;
+                playerDir = right;
+            }
+            if (IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_A))
+            {
+                player.x -= speed;
+                playerDir = left;
+            }
+            if (IsKeyDown(KEY_UP) || IsKeyDown(KEY_W))
+            {
+                player.y -= speed;
+                playerDir = up;
+            }
+            if (IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_S))
+            {
+                player.y += speed;
+                playerDir = down;
+            }
+            // Set the Collider's Position
+            playerCollider.x = player.x;
+            playerCollider.y = player.y;
         }
-        if (IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_A))
-        {
-            player.x -= speed;
-            playerDir = left;
-        }
-        if (IsKeyDown(KEY_UP) || IsKeyDown(KEY_W))
-        {
-            player.y -= speed;
-            playerDir = up;
-        }
-        if (IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_S))
-        {
-            player.y += speed;
-            playerDir = down;
-        }
-        // Set the Collider's Position
-        playerCollider.x = player.x;
-        playerCollider.y = player.y;
-
+        
         //----------------------
         // Boundaries for the Player Movement
         if ((player.x + 64) >= screenWidth) // Right
@@ -201,6 +210,25 @@ int main()
         else
         {
             attacking = false;
+        }
+
+        //----------------------
+        // Current Dialogue Line
+        if (npcCollision == true)
+        {
+            if (IsKeyPressed(KEY_X))
+            {
+                dialogueActive = true;
+                if (currentLine < 2)
+                {
+                    currentLine += 1;
+                }
+                else
+                {
+                    dialogueActive = false;
+                    currentLine = 0;
+                }
+            }
         }
         
         //-------------------------------------------------
@@ -410,19 +438,45 @@ int main()
         if (npcCollision == true)
         {
             // Dialogue Lines
-            dialogue = "Collect the key to find \nthe secret ending donut.";
-            lines = 2;
+            if (currentLine == 1)
+            {
+                dialogue = "Do you have any hints?";
+                lines = 1;
+                speaker = player;
+                speakerWidth = playerRight.width;
+            }
+            else if (currentLine == 2)
+            {
+                dialogue = "Collect the key to find \nthe secret ending donut.";
+                lines = 2;
+                speaker = npc;
+                speakerWidth = npcImage.width;
+            }
+            else
+            {
+                dialogue = "Press X to Interact";
+                lines = 1;
+                speaker = npc;
+                speakerWidth = npcImage.width;
+            }
 
             // Text Box Setup
             dialogueLength = MeasureText(dialogue, textSize);
             textBoxWidth = dialogueLength + (padding * 2);
-            textBoxX = npc.x + (npcImage.width / 2) - (textBoxWidth / 2);
+            textBoxX = speaker.x + (speakerWidth / 2) - (textBoxWidth / 2);
             textBoxHeight = (textSize + padding) * lines;
-            textBoxY = npc.y - textBoxHeight - padding;
+            textBoxY = speaker.y - textBoxHeight - padding;
 
             // Draw the Dialogue
-            DrawRectangle(textBoxX, textBoxY, textBoxWidth, textBoxHeight, BLUE);
-            DrawText(dialogue, textBoxX + padding, textBoxY + padding, textSize, WHITE);
+            if (currentLine != 0)
+            {
+                DrawRectangle(textBoxX, textBoxY, textBoxWidth, textBoxHeight, BLUE);
+                DrawText(dialogue, textBoxX + padding, textBoxY + padding, textSize, WHITE);
+            }
+            else
+            {
+                DrawText(dialogue, textBoxX + padding, textBoxY + (padding * 4 ) + speakerWidth, textSize, GREEN);
+            }
         }
 
 
