@@ -22,8 +22,8 @@ int main()
 
     // Initialize Player
     //Texture2D playerImage = LoadTexture("images/player.png");
-    float playerX = 500;
-    float playerY = 100;
+    float playerX = 550;
+    float playerY = 80;
     Vector2 player = {playerX, playerY};
     float speed = 4.0f;
     Rectangle playerCollider = {player.x, player.y, 40, 40};
@@ -59,7 +59,7 @@ int main()
 
     // Key Item Initialization
     Texture2D keyImage = LoadTexture("images/key.png");
-    Vector2 key = {350, 200};
+    Vector2 key = {350, 150};
     Rectangle keyCollider = {key.x, key.y, 50, 50};
     bool keyCollision = false;
     bool unlocked = false;
@@ -83,6 +83,17 @@ int main()
     // Initialize Walls
     bool wallCollision = false;
     Wall walls[2] = {Wall(10,200), Wall(10,300)};
+
+    // Initialize NPC
+    Texture2D npcImage = LoadTexture("images/warbler.png");
+    Vector2 npc = {330, 290};
+    Rectangle npcCollider = {npc.x, npc.y, 100, 100};
+    float npcCollision = false;
+    const char *dialogue;
+    float dialogueLength, textBoxWidth, textBoxHeight, textBoxX, textBoxY;
+    int textSize = 20;
+    float padding = 10;
+    int lines;
 
     // Cooldown & Timers
     double startTime = GetTime();
@@ -391,6 +402,29 @@ int main()
             default:
             break;
         }
+
+        //----------------------
+        // Draw the NPC
+        DrawTexture(npcImage, npc.x, npc.y, WHITE);
+        npcCollision = CheckCollisionRecs(playerCollider, npcCollider);
+        if (npcCollision == true)
+        {
+            // Dialogue Lines
+            dialogue = "Collect the key to find \nthe secret ending donut.";
+            lines = 2;
+
+            // Text Box Setup
+            dialogueLength = MeasureText(dialogue, textSize);
+            textBoxWidth = dialogueLength + (padding * 2);
+            textBoxX = npc.x + (npcImage.width / 2) - (textBoxWidth / 2);
+            textBoxHeight = (textSize + padding) * lines;
+            textBoxY = npc.y - textBoxHeight - padding;
+
+            // Draw the Dialogue
+            DrawRectangle(textBoxX, textBoxY, textBoxWidth, textBoxHeight, BLUE);
+            DrawText(dialogue, textBoxX + padding, textBoxY + padding, textSize, WHITE);
+        }
+
 
         EndDrawing();
         //-------------------------------------------------
