@@ -2,6 +2,11 @@
 // DONUT LAND INVASION
 // A Top-Down Action-Adventure Game
 // Created by Eevee
+//
+// MUSIC CREDITS:
+// Blue Ska Kevin MacLeod (incompetech.com)
+// Licensed under Creative Commons: By Attribution 3.0 License
+// http://creativecommons.org/licenses/by/3.0/
 
 #include "raylib.h"
 #include "classes.h"
@@ -120,11 +125,23 @@ int main()
     double cooldownTime = 1;
     bool cooldown = false;
 
+    // Music
+    InitAudioDevice();
+    Music levelMusic = LoadMusicStream("sounds/Blue Ska.mp3");
+    PlayMusicStream(levelMusic);
+
+    // Sound Effects
+    Sound attackSound = LoadSound("sounds/sndPop2.mp3");
+
     SetTargetFPS(60);
     // ================================================================================================================
     // Game Loop
     while (!WindowShouldClose() && !gameEnd)
     {
+        // Load Music
+        UpdateMusicStream(levelMusic);
+        PauseMusicStream(levelMusic);
+
         //================================================================================================
         // Scenes
         switch (scene)
@@ -141,6 +158,10 @@ int main()
             //====================================================================
             // Level
             case level:
+                //-------------------------------------------------
+                // Play Music
+                ResumeMusicStream(levelMusic);
+
                 //-------------------------------------------------
                 // Player Controls
                 if (dialogueActive == false)
@@ -379,6 +400,7 @@ int main()
                     if (attackCollision == true)
                     {
                         enemies[i].destroyed = true;
+                        PlaySound(attackSound);
                     }
                     else
                     {
@@ -590,5 +612,9 @@ int main()
         EndDrawing();
         //-------------------------------------------------
     }
+    // Unload Music
+    UnloadMusicStream(levelMusic);
+    CloseAudioDevice();
+
     CloseWindow();
 }

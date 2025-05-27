@@ -17,7 +17,11 @@
 			"array": "cpp",
 			"string_view": "cpp",
 			"initializer_list": "cpp",
-			"span": "cpp"
+			"span": "cpp",
+			"deque": "cpp",
+			"unordered_map": "cpp",
+			"vector": "cpp",
+			"text_encoding": "cpp"
 		},
 		"files.exclude": {
 			"**/*.rpyc": true,
