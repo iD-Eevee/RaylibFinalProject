@@ -21,7 +21,9 @@ int main()
     typedef enum
     {
         title,
-        level
+        level,
+        end,
+        gameOver
     } Scene;
     Scene scene = title;
 
@@ -75,6 +77,9 @@ int main()
     // Goal Initialization
     Texture2D goalImage = LoadTexture("images/goal.png");
     Vector2 goal = {650, 300};
+    Rectangle goalCollider = {goal.x, goal.y, 100, 100};
+    bool goalCollision = false;
+    bool restart = false;
 
     // Collectible Item Initialization
     bool coinCollision = false;
@@ -257,6 +262,24 @@ int main()
             break;
 
             //====================================================================
+            // End
+            case end:
+            if (IsKeyPressed(KEY_R))
+            {
+                scene = title;
+            }
+            break;
+
+            //====================================================================
+            // Game Over
+            case gameOver:
+            if (IsKeyPressed(KEY_R))
+            {
+                scene = title;
+            }
+            break;
+
+            //====================================================================
             // Default
             default:
             break;
@@ -275,6 +298,16 @@ int main()
             ClearBackground(ORANGE);
             DrawText("Donut Land Invasion", 40, 150, 70, BLACK);
             DrawText("Press Enter to Start", 230, 250, 30, BLACK);
+            restart = true;
+            if (restart == true)
+            {
+                player.x = playerX;
+                player.y = playerY;
+                playerHealth = playerHealthMax;
+                playerCollider.x = player.x;
+                playerCollider.y = player.y;
+                restart = false;
+            }
             break;
 
             //====================================================================
@@ -389,7 +422,8 @@ int main()
                         // Game Over
                         if (playerHealth <= 0)
                         {
-                            gameEnd = true;
+                            //gameEnd = true;
+                            scene = gameOver;
                         }
                     }
                 }
@@ -426,6 +460,11 @@ int main()
             else
             {
                 DrawTexture(goalImage, goal.x, goal.y, WHITE);
+                goalCollision = CheckCollisionRecs(playerCollider, goalCollider);
+                if (goalCollision == true)
+                {
+                    scene = end;
+                }
             }
 
             //----------------------
@@ -524,6 +563,22 @@ int main()
                     DrawText(dialogue, textBoxX + padding, textBoxY + (padding * 4 ) + speakerWidth, textSize, GREEN);
                 }
             }
+            break;
+
+            //====================================================================
+            // End
+            case end:
+            ClearBackground(GREEN);
+            DrawText("You Win!", 250, 150, 70, BLACK);
+            DrawText("Press R to Return to Title", 200, 250, 30, BLACK);
+            break;
+
+            //====================================================================
+            // Game Over
+            case gameOver:
+            ClearBackground(RED);
+            DrawText("GAME OVER", 200, 150, 70, BLACK);
+            DrawText("Press R to Return to Title", 200, 250, 30, BLACK);
             break;
 
             //====================================================================
