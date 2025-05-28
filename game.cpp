@@ -4,7 +4,8 @@
 // Created by Eevee
 //
 // MUSIC CREDITS:
-// Blue Ska Kevin MacLeod (incompetech.com)
+// Blue Ska & Mesmerizing Galaxy
+// by Kevin MacLeod (incompetech.com)
 // Licensed under Creative Commons: By Attribution 3.0 License
 // http://creativecommons.org/licenses/by/3.0/
 
@@ -17,7 +18,7 @@ int main()
     // Initialize Window
     int screenWidth = 800;
     int screenHeight = 450;
-    InitWindow(screenWidth, screenHeight, "Top-Down Game");
+    InitWindow(screenWidth, screenHeight, "Evo in Donut Land");
 
     // Variables
     int score = 0;
@@ -32,8 +33,18 @@ int main()
     } Scene;
     Scene scene = title;
 
+    // Level
+    typedef enum
+    {
+        donutLand,
+        swamp
+    } Level;
+    Level currentLevel = donutLand;
+    bool initLevel = false;
+
     // Initialize Background
     Texture2D bgImage = LoadTexture("images/level1.png");
+    Texture2D bgImageSwamp = LoadTexture("images/level2.png");
 
     // Initialize Player
     //Texture2D playerImage = LoadTexture("images/player.png");
@@ -127,7 +138,9 @@ int main()
 
     // Music
     InitAudioDevice();
-    Music levelMusic = LoadMusicStream("sounds/Blue Ska.mp3");
+    Music donutMusic = LoadMusicStream("sounds/Blue Ska.mp3");
+    Music swampMusic = LoadMusicStream("sounds/Mesmerizing Galaxy Loop.mp3");
+    Music levelMusic = donutMusic;
     PlayMusicStream(levelMusic);
 
     // Sound Effects
@@ -138,10 +151,6 @@ int main()
     // Game Loop
     while (!WindowShouldClose() && !gameEnd)
     {
-        // Load Music
-        UpdateMusicStream(levelMusic);
-        PauseMusicStream(levelMusic);
-
         //================================================================================================
         // Scenes
         switch (scene)
@@ -159,9 +168,13 @@ int main()
             // Level
             case level:
                 //-------------------------------------------------
-                // Play Music
-                ResumeMusicStream(levelMusic);
-
+                // Music
+                if (initLevel == false)
+                {
+                    StopMusicStream(levelMusic);
+                }
+                UpdateMusicStream(levelMusic);
+                
                 //-------------------------------------------------
                 // Player Controls
                 if (dialogueActive == false)
@@ -317,16 +330,19 @@ int main()
             // Title
             case title:
             ClearBackground(ORANGE);
-            DrawText("Donut Land Invasion", 40, 150, 70, BLACK);
+            DrawText("Evo in Donut Land", 80, 150, 70, BLACK);
             DrawText("Press Enter to Start", 230, 250, 30, BLACK);
             restart = true;
+            currentLevel = donutLand;
+            initLevel = false;
             if (restart == true)
             {
-                player.x = playerX;
+                /*player.x = playerX;
                 player.y = playerY;
-                playerHealth = playerHealthMax;
                 playerCollider.x = player.x;
-                playerCollider.y = player.y;
+                playerCollider.y = player.y;*/
+                playerHealth = playerHealthMax;
+                score = 0;
                 restart = false;
             }
             break;
@@ -334,8 +350,137 @@ int main()
             //====================================================================
             // Level
             case level:
-            // Draw Background
-            DrawTexture(bgImage, 0, 0, WHITE);
+            // Different Levels
+            switch (currentLevel)
+            {
+                //====================================================================
+                // Level 1 (Donut Land)
+                case donutLand:
+                // Draw Background
+                DrawTexture(bgImage, 0, 0, WHITE);
+                
+                // Music
+                levelMusic = donutMusic;
+
+                if (initLevel == false)
+                {
+                    // Player Position
+                    playerX = 550;
+                    playerY = 80;
+
+                    // Collectibles
+                    items[0] = Item(100, 100);
+                    items[1] = Item(100, 200);
+                    items[2] = Item(100, 300);
+
+                    // Enemies
+                    enemies[0] = {Enemy(500, 200, Idle)};
+                    enemies[1] = {Enemy(400, 200)};
+                    enemies[2] = {Enemy(150, 100, Moving, X, 100, 300)};
+                    enemies[3] = {Enemy(250, 200, Moving, Y, 200, 300)};
+
+                    // NPCs
+                    npcImage = LoadTexture("images/warbler.png");
+                    npc.x = 330;
+                    npc.y = 290;
+
+                    // Goal
+                    goal.x = 650;
+                    goal.y = 300;
+
+                    // Key
+                    key.x = 350;
+                    key.y = 150;
+
+                    // Walls
+                    walls[0] = {Wall(10,200)};
+                    walls[1] = {Wall(10,300)};
+                }
+                break;
+
+                //====================================================================
+                // Level 2 (Swamp)
+                case swamp:
+                // Draw Background
+                DrawTexture(bgImageSwamp, 0, 0, WHITE);
+
+                // Music
+                levelMusic = swampMusic;
+
+                if (initLevel == false)
+                {
+                    // Player Position
+                    playerX = 20;
+                    playerY = 100;
+
+                    // Collectibles
+                    items[0] = Item(30, 360);
+                    items[1] = Item(200, 210);
+                    items[2] = Item(510, 130);
+
+                    // Enemies
+                    enemies[0] = {Enemy(30, 250)};
+                    enemies[1] = {Enemy(360, 240)};
+                    enemies[2] = {Enemy(260, 340, Moving, X, 260, 550)};
+                    enemies[3] = {Enemy(720, 70, Moving, Y, 70, 250)};
+
+                    // NPCs
+                    npcImage = LoadTexture("images/flamingo.png");
+                    npc.x = 320;
+                    npc.y = 120;
+
+                    // Key
+                    key.x = 290;
+                    key.y = 60;
+
+                    // Goal
+                    goal.x = 650;
+                    goal.y = 300;
+
+                    // Walls
+                    walls[0] = {Wall(900,900)};
+                    walls[1] = {Wall(900,900)};
+                }
+                break;
+
+                default:
+                break;
+            }
+
+            // Initialization for all Levels
+            if (initLevel == false)
+            {
+                // Set Colliders & Positions
+                player.x = playerX;
+                player.y = playerY;
+                playerCollider.x = player.x;
+                playerCollider.y = player.y;
+                goalCollider.x = goal.x;
+                goalCollider.y = goal.y;
+                keyCollider.x = key.x;
+                keyCollider.y = key.y;
+                npcCollider.x = npc.x;
+                npcCollider.y = npc.y;
+                restart = false;
+
+                // Reset Coins Collected
+                for (int i = 0; i < 3; ++i)
+                {
+                    items[i].collect = false;
+                }
+
+                // Reset Enemies Destroyed
+                for (int i = 0; i < 4; ++i)
+                {
+                    enemies[i].destroyed = false;
+                }
+
+                // Music
+                PlayMusicStream(levelMusic);
+
+                // Complete Inialization
+                initLevel = true;
+            }
 
             //----------------------
             // Coin Collision
@@ -425,7 +570,6 @@ int main()
                                 enemies[i].speed = -enemies[i].velocity;
                             }
                         }
-                        
                         enemies[i].collider.x = enemies[i].position.x;
                         enemies[i].collider.y = enemies[i].position.y;
                     }
@@ -485,7 +629,18 @@ int main()
                 goalCollision = CheckCollisionRecs(playerCollider, goalCollider);
                 if (goalCollision == true)
                 {
-                    scene = end;
+                    unlocked = false;
+                    initLevel = false;
+
+                    // Set the Destination
+                    if (currentLevel == swamp)
+                    {
+                        scene = end;
+                    }
+                    else if (currentLevel == donutLand)
+                    {
+                        currentLevel = swamp;
+                    }
                 }
             }
 
@@ -547,14 +702,33 @@ int main()
                 // Dialogue Lines
                 if (currentLine == 1)
                 {
-                    dialogue = "Do you have any hints?";
+                    // Warbler
+                    if (currentLevel == donutLand)
+                    {
+                        dialogue = "Do you have any hints?";
+                    }
+                    // Flamingo
+                    else if (currentLevel == swamp)
+                    {
+                        dialogue = "Do you live in this swamp?";
+                    }
                     lines = 1;
                     speaker = player;
                     speakerWidth = playerRight.width;
                 }
                 else if (currentLine == 2)
                 {
-                    dialogue = "Collect the key to find \nthe secret ending donut.";
+                    // Warbler
+                    if (currentLevel == donutLand)
+                    {
+                        dialogue = "Collect the key to find \nthe secret ending donut.";
+                    }
+                    // Flamingo
+                    else if (currentLevel == swamp)
+                    {
+                        dialogue = "Collect the key to find \nthe secret ending donut.";
+                        dialogue = "I just moved here, yeah. \nI came from the beach!";
+                    }
                     lines = 2;
                     speaker = npc;
                     speakerWidth = npcImage.width;
@@ -582,7 +756,7 @@ int main()
                 }
                 else
                 {
-                    DrawText(dialogue, textBoxX + padding, textBoxY + (padding * 4 ) + speakerWidth, textSize, GREEN);
+                    DrawText(dialogue, textBoxX + padding, textBoxY + (padding * 4 ) + speakerWidth, textSize, BLACK);
                 }
             }
             break;
